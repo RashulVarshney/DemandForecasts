@@ -166,6 +166,22 @@ def _generate_orders(
     order_rows = []
     order_id = 0
 
+    # A pool of customers per zone with power-law (Zipf-like) repeat-order behavior:
+    # a small fraction of customers order far more frequently than the rest, which is
+    # what makes "repeat customer" SQL analysis meaningful instead of everyone being unique.
+    customers_per_zone = 2500
+    customer_weights = {}
+    customer_ids_by_zone = {}
+    next_customer_id = 0
+    for zone_id in zone_info.index:
+        ids = np.arange(next_customer_id, next_customer_id + customers_per_zone)
+        next_customer_id += customers_per_zone
+        ranks = np.arange(1, customers_per_zone + 1)
+        weights = 1.0 / ranks  # Zipf-like: top customers order much more often
+        weights = weights / weights.sum()
+        customer_ids_by_zone[zone_id] = ids
+        customer_weights[zone_id] = weights
+
     for _, rest in restaurants.iterrows():
         zone = zone_info.loc[rest["zone_id"]]
         zone_mult = zone["demand_multiplier"]
@@ -180,7 +196,12 @@ def _generate_orders(
             hour_ts = bucket_time.floor("h")
             traffic_mult = wt_lookup.get((rest["zone_id"], hour_ts), 1.0)
             weather = weather_lookup.get((rest["zone_id"], hour_ts), "Clear")
-            for _ in range(n_orders):
+            zone_customer_ids = customer_ids_by_zone[rest["zone_id"]]
+            zone_customer_weights = customer_weights[rest["zone_id"]]
+            order_customer_ids = rng.choice(
+                zone_customer_ids, size=n_orders, p=zone_customer_weights
+            )
+            for order_i in range(n_orders):
                 offset_sec = rng.integers(0, minute_granularity * 60)
                 order_time = bucket_time + pd.Timedelta(seconds=int(offset_sec))
 
@@ -213,6 +234,7 @@ def _generate_orders(
                 order_rows.append(
                     (
                         order_id,
+                        int(order_customer_ids[order_i]),
                         order_time,
                         int(rest["restaurant_id"]),
                         int(rest["zone_id"]),
@@ -231,7 +253,7 @@ def _generate_orders(
                 order_id += 1
 
     cols = [
-        "order_id", "order_timestamp", "restaurant_id", "zone_id", "n_items", "basket_value_inr",
+        "order_id", "customer_id", "order_timestamp", "restaurant_id", "zone_id", "n_items", "basket_value_inr",
         "distance_km", "prep_time_min", "travel_time_min", "rider_assignment_delay_min",
         "eta_minutes", "weather_condition", "traffic_multiplier", "is_cancelled",
     ]
