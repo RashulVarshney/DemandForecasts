@@ -156,7 +156,28 @@ likely range 25–39 min").
 
 ### 8.3 Business simulation
 
-**[BUSINESS_SIM_PLACEHOLDER]**
+Zone-level 30-min-ahead LightGBM forecast (MAE 9.29 orders, WAPE 0.143 at the
+zone-aggregated grain — noisier than the restaurant-level 30-min model since
+zone totals have higher variance) used to drive a simulated rider-allocation
+comparison (`src/forecasting/business_simulation.py`, same total rider-hours
+budget for both policies):
+
+| Policy | Total unmet demand | Capacity utilization | % buckets fully met |
+|---|---|---|---|
+| Fixed allocation | 281,717 orders | 70.4% | 46.0% |
+| Forecast-driven allocation | 199,053 orders | 97.3% | 16.4% |
+
+**Total unmet demand fell 29.3%** and capacity utilization rose sharply — the
+forecast-driven policy uses the same rider budget far more efficiently in
+aggregate. **Honest tradeoff**: the share of individual buckets where
+capacity *fully* met demand actually dropped (46.0% → 16.4%), because
+allocating tightly around the predicted mean leaves many buckets with a
+small shortfall instead of a comfortable fixed cushion. A real deployment
+would likely add a small safety margin above the point forecast (or use the
+forecast's prediction interval upper bound) rather than allocating to the
+exact predicted mean — this is exactly the kind of decision a demand-forecast
+uncertainty estimate (Phase 8) is meant to inform. See notebook 05 for the
+full per-zone breakdown and this caveat discussed in context.
 
 ## 9. Error analysis
 

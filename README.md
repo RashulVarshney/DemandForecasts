@@ -159,7 +159,13 @@ against a **forecast-driven** allocation (same total rider-hours budget,
 redistributed proportionally to the predicted demand) — see
 [`src/forecasting/business_simulation.py`](src/forecasting/business_simulation.py)
 for the mechanics and [`models/business_simulation_summary.json`](models/business_simulation_summary.json)
-for the measured result. This is a simulation with explicit caveats (no
+for the measured result: **total unmet demand fell 29.3%** (281,717 →
+199,053 orders) and capacity utilization rose from 70.4% to 97.3%. Reported
+honestly alongside a real tradeoff: the share of buckets where capacity
+*fully* met demand actually dropped (46.0% → 16.4%), since allocating
+tightly to the predicted mean leaves many buckets with a small shortfall
+instead of a comfortable fixed cushion — see model report §8.3 and notebook
+05 for the full discussion. This is a simulation with explicit caveats (no
 rider shift constraints, no reallocation cost) — see the model report §11.
 
 ## Scaling with Spark

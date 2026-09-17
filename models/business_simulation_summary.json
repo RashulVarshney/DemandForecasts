@@ -1,0 +1,19 @@
+{
+  "overall": {
+    "fixed": {
+      "total_demand": 498148.0,
+      "total_capacity": 307520.0,
+      "total_unmet_demand": 281717.0,
+      "capacity_utilization": 0.7037922618467238,
+      "service_level_pct_buckets_met": 0.4600735748179927
+    },
+    "forecast_driven": {
+      "total_demand": 498148.0,
+      "total_capacity": 307520.0,
+      "total_unmet_demand": 199052.6857133365,
+      "capacity_utilization": 0.9726094495272766,
+      "service_level_pct_buckets_met": 0.16414700338013521
+    }
+  },
+  "unmet_demand_reduction_pct": 29.343033713500954
+}
