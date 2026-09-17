@@ -247,9 +247,9 @@ python -m app.inference demand --restaurant_id 5 --timestamp "2026-06-15 19:30"
   "restaurant_id": 5,
   "timestamp": "2026-06-15 19:30:00",
   "bucket_ts": "2026-06-15 19:30:00",
-  "forecast_30m": 4.2,
-  "forecast_1h": 7.8,
-  "forecast_2h": 14.1,
+  "forecast_30m": 10.19,
+  "forecast_1h": 10.12,
+  "forecast_2h": 8.42,
   "expected_peak": true
 }
 ```
@@ -262,15 +262,16 @@ python -m app.inference eta --restaurant_id 5 --distance_km 3.2 --n_items 3 \
 {
   "restaurant_id": 5,
   "timestamp": "2026-06-15 19:30:00",
-  "eta_minutes": 31.4,
-  "lower_bound": 24.8,
-  "upper_bound": 39.2
+  "eta_minutes": 22.0,
+  "lower_bound": 15.7,
+  "upper_bound": 29.6
 }
 ```
 
-(Exact values depend on the generated data's random seed and will vary
-slightly run to run since `app/inference.py` retrains on the fly — see
-"Production considerations" in the model report for why that's a documented
+(Both outputs above are real, reproduced by running the commands directly
+against this repo's generated data. Exact values will vary slightly run to
+run since `app/inference.py` retrains on the fly — see "Production
+considerations" in the model report for why that's a documented
 simplification rather than a production pattern.)
 
 ## Limitations
