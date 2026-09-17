@@ -1,0 +1,37 @@
+# Central configuration for the food-delivery-ml pipeline.
+# All scripts/notebooks read from here so parameters are defined once.
+
+random_seed: 42
+
+simulation:
+  n_days: 90
+  start_date: "2026-05-01"
+  n_zones: 12
+  n_restaurants: 150
+  minute_granularity: 5      # raw event resolution (minutes)
+  bucket_minutes: 30         # demand aggregation bucket for forecasting
+
+paths:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  models_dir: "models"
+  figures_dir: "reports/figures"
+
+demand_forecasting:
+  horizons_minutes: [30, 60, 120, 360, 1440]   # 30m, 1h, 2h, 6h, next-day
+  lag_buckets: [1, 2, 4, 48, 336]              # in units of bucket_minutes (30m,1h,2h,1d,1w)
+  rolling_windows_buckets: [4, 16, 48]         # 2h, 8h, 1d rolling stats
+  train_frac: 0.70
+  val_frac: 0.15
+  test_frac: 0.15
+
+eta_prediction:
+  quantiles: [0.1, 0.5, 0.9]
+  train_frac: 0.70
+  val_frac: 0.15
+  test_frac: 0.15
+
+business_simulation:
+  service_level_target: 0.90
+  rider_capacity_per_unit: 4     # orders one rider can serve per 30-min bucket
+  fixed_capacity_riders: 10      # baseline "without forecast" static allocation per zone

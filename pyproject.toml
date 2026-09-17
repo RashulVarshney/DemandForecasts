@@ -1,0 +1,9 @@
+[project]
+name = "food-delivery-ml"
+version = "0.1.0"
+description = "Food Delivery Demand Forecasting & Delivery ETA Prediction System"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
