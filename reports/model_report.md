@@ -131,10 +131,25 @@ margin *growing* at longer horizons — naive/seasonal-naive baselines degrade
 faster than the ML model as the prediction gets further from the last
 observed value, while LightGBM's rolling/historical features keep it stable.
 
-*(GRU sequence-model result for the 1-hour horizon: see
-`models/gru_demand_results.json` once generated — filled in below.)*
+**GRU sequence model (1-hour horizon only)**: a 1-layer GRU (32 hidden
+units) consuming the raw 6-hour (12-bucket) sequence of `order_count` +
+calendar features per restaurant achieved **MAE 1.707**, slightly *beating*
+LightGBM's 1.812 for the same horizon (see `models/gru_demand_results.json`
+and `src/forecasting/train_gru_demand.py`). This is a genuine, if modest,
+result: the raw sequence apparently carries a small amount of additional
+signal beyond the hand-engineered lag/rolling features — plausibly because
+the GRU can learn nonlinear combinations of the recent trajectory (e.g.
+"accelerating" vs. "plateauing" demand) that the fixed set of rolling
+mean/std/max features only partially captures.
 
-**[GRU_RESULT_PLACEHOLDER]**
+**Despite the small accuracy edge, LightGBM remains the recommended
+production model** for this task: the GRU's ~5.8% MAE improvement doesn't
+offset its real costs — no exact SHAP-style attribution (unlike LightGBM's
+`TreeExplainer`), a hard requirement for `sequence_length` (12 buckets = 6h)
+of prior history per restaurant before it can predict anything (worse
+cold-start behavior than the tree model), more hyperparameters to maintain,
+and slower training/inference. This tradeoff is discussed explicitly rather
+than defaulting to "the more complex model won."
 
 ### 8.2 ETA prediction (minutes)
 

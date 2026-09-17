@@ -46,8 +46,12 @@ def _prepare_xy(panel: pd.DataFrame, target_col: str):
         if c not in NON_FEATURE_COLS and c not in TARGET_COLS
     ]
     df = panel.dropna(subset=[target_col]).copy()
-    # Encode weather condition as a category code (present in feature set via one-hot-ish signal)
-    df["weather_code"] = df["weather_condition"].astype("category").cat.codes
+    # Encode weather condition as a category code. Computed on the FULL panel (not just
+    # this filtered df) via a fixed category list so the same weather condition always
+    # maps to the same code whether seen during training or at inference time on a
+    # single new row (see app/inference.py::predict_demand, which reuses this mapping).
+    weather_categories = sorted(panel["weather_condition"].dropna().unique())
+    df["weather_code"] = pd.Categorical(df["weather_condition"], categories=weather_categories).codes
     feature_cols = feature_cols + ["weather_code"]
     # Drop rows where early lag/rolling history is still NaN (start of each restaurant's series)
     df = df.dropna(subset=feature_cols)

@@ -55,6 +55,10 @@ def predict_demand(restaurant_id: int, timestamp: str, cfg: dict) -> dict:
             "(see data/README.md) since features rely on historical lags."
         )
 
+    row = row.copy()
+    weather_categories = sorted(panel["weather_condition"].dropna().unique())
+    row["weather_code"] = pd.Categorical(row["weather_condition"], categories=weather_categories).codes
+
     result = {"restaurant_id": restaurant_id, "timestamp": str(ts), "bucket_ts": str(bucket_ts)}
     peak_hours = [12, 13, 14, 19, 20, 21]
     for target_col in ["target_30m", "target_1h", "target_2h"]:

@@ -290,8 +290,3 @@ simplification rather than a production pattern.)
 - Real weather/traffic *forecast* features (not just current conditions) for
   longer horizons.
 
-## Interview Preparation
-
-See [`INTERVIEW_GUIDE.md`](INTERVIEW_GUIDE.md) (60+ Q&A across 15 categories)
-and [`RESUME_BULLETS.md`](RESUME_BULLETS.md) for interview prep artifacts
-built from this project's actual, reproducible results.

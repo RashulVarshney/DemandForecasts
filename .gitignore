@@ -24,3 +24,7 @@ models/*.txt
 *.log
 spark-warehouse/
 metastore_db/
+
+# Personal interview-prep artifacts -- kept locally, not published to the repo
+INTERVIEW_GUIDE.md
+RESUME_BULLETS.md
